@@ -1,0 +1,57 @@
+#!/bin/bash
+while getopts a:o: flag
+do
+    case "${flag}" in
+        a) annotations=${OPTARG};;
+        o) organism=${OPTARG};;
+    esac
+done
+echo "Opis genomu $organism"
+echo
+
+protein_coding_genes="$(grep ID=gene $annotations | grep -c protein_coding)"
+echo "W genomie $organism znajduje się:"
+echo -e "\t$protein_coding_genes genów kodujących białka"
+
+mRNA="$(grep ID=transcript $annotations | grep -c mRNA)"
+echo -e "\t$mRNA transkryptów mRNA"
+
+ncp_gene="$(grep ID=gene $annotations | grep -vc protein_coding)"
+
+ncp_gene2="$(grep ID=gene $annotations | grep -v protein_coding | cut -f 3 | sort -u)"
+a=($(echo $ncp_gene2 | tr '\n' "\n"))
+echo -e "\t$ncp_gene genów niekodujących białek, które są reprezentowane przez:"
+for element in "${a[@]}"
+do
+    echo -e "\t\t$element"
+done
+
+echo
+transcripts="$(grep ID=transcript $annotations | cut -f 3 | sort | uniq -c)"
+echo "W genomie szczekuszki znajdują się następujące transkrypty w podanych liczbach:"
+echo "$transcripts"
+
+echo
+biotypes="$(grep -o 'biotype=[^;]*' $annotations | sort | uniq -c)"
+echo "W genomie szczekuszki znajdują się cechy o następujących biotypach w podanych liczbach:"
+echo "$biotypes"
+
+echo
+ribo_prot="$(grep 'ribosomal protein' $annotations | cut -f 1 |sort -u | wc -l)"
+echo "Geny związane z ekspresją białek rybosomalnych znajdują się na $ribo_prot chromosomach"
+#88
+
+echo
+chr="$(grep ^'##sequence-region' $annotations | cut -d ' ' -f 4,6 | head)"
+echo "Pierwszych 10 chromosomów szczekuszki wraz z ich długościami możesz znaleźć poniżej"
+echo "$chr"
+
+
+echo
+tmp=${annotations%\.*}
+bed_name=$tmp".bed"
+bed="$(grep -v ^'#' $annotations | cut -f 1,4,5,9 | grep -o '.*ID=[^;]*' > Ochotona_princeps.OchPri2.0-Ens.106.bed)"
+bed_first="$(head -15 $bed_name)"
+echo "Pierwszych 15 linii adnotacji genomu $organism w formacie BED wygląda następująco:"
+echo "$bed_first"
+

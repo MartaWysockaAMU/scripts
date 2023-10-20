@@ -1,0 +1,5 @@
+Tak można stworzyć plik, do którego od razu wpisujemy jakąś treść poprzez konsolę.
+Piszemy co chcemy i potem to zapisze się do pliku.
+Ale UWAGA! Jeśli podamy nazwę już istniejącego pliku to zostanie on nadpisany i cała zawartość zostanie zastąpiona tym co tutaj piszę.
+Podawanie zawartości kończymy ctrl + D.
+W ten sposób rozszerzamy plik - dodajemy do niego zawartość bez usuwania tego, co już w nim było.
